@@ -1,0 +1,12 @@
+@model App.Models.ProductModel
+@{
+    var product = ViewBag.product as ProductModel;
+}
+<p>@ViewData["Title"]</p>
+<div class="card bg-info text-white">
+    <h1 class="card-header">@product.Name</h1>
+    <div class="card-body">
+        <h5 class="card-title">@product.Price</h5>
+        <p class="card-text">@product.Description</p>
+    </div>
+</div>
