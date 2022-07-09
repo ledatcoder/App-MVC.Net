@@ -1,6 +1,7 @@
 
 
 
+using App.ExtendMethods;
 using App.Services;
 using Microsoft.AspNetCore.Mvc.Razor;
 
@@ -11,6 +12,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages(); // đăng ký các dịch vụ của trang Razor
 
+builder.Services.AddSingleton(typeof(PlanetService)); // đăng ký dịch vụ của trang Razor
 
 builder.Services.Configure<RazorViewEngineOptions>(options =>
 {
@@ -38,7 +40,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.AddStatusCodePage(); // hiện thị lỗi từ 400 - 599
+
 app.UseRouting();
+
 
 app.UseAuthorization();
 
@@ -46,12 +51,15 @@ app.UseAuthentication(); // xác định danh tính
 
 app.UseAuthorization(); // xác thực quyền truy cập
 
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // đăng ký các dịch vụ của trang Razor
-app.UseEndpoints(endpoints => {
+app.UseEndpoints(endpoints =>
+{
 
     // đoạn code này tạo ra các điểm enpoint bằng việt tạo ra 1 root đặt tên là default
     // nó phân tích địa chỉ truy cập URL: {controller=Home}/{action=Index}/{id?} 
@@ -59,11 +67,64 @@ app.UseEndpoints(endpoints => {
     //vd: khi truy địa chỉ là ABC/Xyz
     // =>tìm và tạo ra controller ABC và gọi phương thức Xyz
     // nếu không thiết lập thì sẻ khởi tạo ra controller Home và gọi phương thức Index
+    // endpoints.MapControllerRoute(
+    //     name: "default",
+    //     pattern: "{controller=Home}/{action=Index}/{id?}");
+    // endpoints.MapRazorPages(); // kích hoạt các điểm enpoint cho Razor Pages => vừa có thể truy cập đến các trang Razor Pages và các controller
+
+
+    // /sayhi
+    endpoints.MapGet("/sayhi", async (context) =>
+    {
+        await context.Response.WriteAsync($"Hello ASP.NET MVC {DateTime.Now}");
+    });
+
+    // endpoints.MapControllers
+    // endpoints.MapControllerRoute
+    // endpoints.MapDefaultControllerRoute
+    // endpoints.MapAreaControllerRoute
+
+    // [AcceptVerbs]
+
+    // [Route]
+
+    // [HttpGet]
+    // [HttpPost]
+    // [HttpPut]
+    // [HttpDelete]
+    // [HttpHead]
+    // [HttpPatch]
+
+    // Area
+
+    endpoints.MapControllers();
+
+    endpoints.MapControllerRoute(
+        name: "first",
+        pattern: "{url:regex(^((xemsanpham)|(viewproduct))$)}/{id:range(2,4)}",
+        defaults: new
+        {
+            controller = "First",
+            action = "ViewProduct"
+        }
+
+    );
+
+    endpoints.MapAreaControllerRoute(
+        name: "product",
+        pattern: "/{controller}/{action=Index}/{id?}",
+        areaName: "ProductManage"
+    );
+
+    // Controller khong co Area
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-    endpoints.MapRazorPages(); // kích hoạt các điểm enpoint cho Razor Pages => vừa có thể truy cập đến các trang Razor Pages và các controller
-});
+        pattern: "/{controller=Home}/{action=Index}/{id?}"
+    );
+
+    endpoints.MapRazorPages();
+
+ });
 
 
 app.Run();

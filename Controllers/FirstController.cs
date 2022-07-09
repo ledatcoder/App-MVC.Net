@@ -118,6 +118,7 @@ namespace App.Controllers
         }   
         [TempData]
         public string message { get; set; }
+        [AcceptVerbs("POST", "GET")] // chỉ chấp nhận 2 phương thức POST và GET
         public IActionResult ViewProduct(int? id)
         {
             var product = _productService.Where(p => p.Id == id).FirstOrDefault();

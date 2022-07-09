@@ -1,0 +1,15 @@
+@using App.Models;
+@model List<ProductModel>
+@* @{
+    Layout = "_Layout";
+} *@
+
+<h1>Danh Sách Các Sãn Phẫm</h1>
+<ul>
+    @foreach (var product in Model)
+    {
+        <li>
+            @product.Name
+        </li>
+    }
+</ul>
